@@ -32,12 +32,9 @@ var Table = {
 
     $('body').on('submit', '.batch', function(event) {
       event.preventDefault()
-
-      // console.log(Oven.racks)
-      // console.log(Table.pendingBatches)
-      batch = Table.pendingBatches.shift()
-      Oven.racks.push(batch)
-      console.log(Oven.racks)
+      batchId = $(this).data('id')
+      batch = Table.findBatch(batchId)
+      Table.moveBatch(batch)
     });
 
   },
@@ -45,6 +42,19 @@ var Table = {
   addBatches: function(batch){
     this.pendingBatches.push(batch)
     $('#prep_batches').append('<li>' + batch.type + '<form data-id="' + batch.id + '" class="batch"> <input type="submit" value="Add to oven"> </form></li>')
+  },
+
+  findBatch: function(id){
+    item = this.pendingBatches.filter(function(element){ return element.id === id
+  })
+    return item[0]
+  },
+
+  moveBatch: function(batch){
+    batch = this.findBatch(batch.id)
+    Oven.racks.push(batch)
+    var index = this.pendingBatches.indexOf(batch)
+    this.pendingBatches.splice(index, 1)
   }
 }
 
@@ -53,12 +63,8 @@ var Oven = {
   init: function() {
     this.racks = new Array()
   },
-
-
 }
-//when we create a batch we append a li of the batch type to table
-//when appended to table, table needs an add to oven button
-//when add to oven clicked, which adds the cookie to the oven
+
 
 $(document).ready(function() {
   Table.init()
