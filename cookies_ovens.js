@@ -1,17 +1,16 @@
-function Batch(type, requiredBakeTime){
-  this.type = type
-  this.requiredBakeTime = requiredBakeTime
-  Table.addBatches(this)
-}
-
-var Cookie = {
+var Batch = {
   createBatch: function(){
     $('#new_batch').submit(function(event) {
       event.preventDefault()
+
       type = $('#type').val()
       time = parseInt($('#time').val())
 
-      var batch = new Batch(type, time)
+      var batch = {type: type, requiredBakeTime: time}
+
+      console.log(batch)
+
+      Table.addBatches(batch)
 
       console.log(Table)
 
@@ -25,7 +24,6 @@ var Table = {
 
   init: function() {
     this.pendingBatches = new Array()
-
   },
 
   addBatches: function(batch){
@@ -38,23 +36,7 @@ var Table = {
 //when appended to table, table needs an add to oven button
 //when add to oven clicked, which adds the cookie to the oven
 
-
-
-
 $(document).ready(function() {
-  Cookie.createBatch()
+  Batch.createBatch()
   Table.init()
-
-  // $('#new_batch').submit(function(event) {
-  //   event.preventDefault()
-  //   type = $('#type').val()
-  //   time = parseInt($('#time').val())
-
-  //   var batch = new Batch(type, time)
-
-  //   console.log(Table)
-
-  //   //we want to get the params of the form
-  //   // and create a cookie object using those params
-  // })
 })
