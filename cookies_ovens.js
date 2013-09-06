@@ -20,6 +20,24 @@ var Batch = {
       time = parseInt($('#time').val())
       Batch.createBatch(type, time)
     })
+  },
+
+  getState: function() {
+    percentCompleted = this.timeBaked/this.requiredBakeTime;
+
+    if (percentCompleted > 1) {
+      return "crispy";
+    } else if (percentCompleted > 0.8) {
+      return "just_right";
+    } else if (percentCompleted > 0.5) {
+      return "still_gooey";
+    } else {
+      return "raw";
+    }
+  },
+
+  bake: function(){
+    this.timeBaked += 1
   }
 }
 
@@ -41,7 +59,7 @@ var Table = {
 
   addBatches: function(batch){
     this.pendingBatches.push(batch)
-    $('#prep_batches').append('<li>' + batch.type + '<form data-id="' + batch.id + '" class="batch"> <input type="submit" value="Add to oven"> </form></li>')
+    $('#prep_batches').append('<li>' + batch.type + '<form id="' +batch.id+ '"data-id="' + batch.id + '" class="batch"> <input type="submit" value="Add to oven"> </form></li>')
   },
 
   findBatch: function(id){
@@ -52,9 +70,10 @@ var Table = {
 
   moveBatch: function(batch){
     batch = this.findBatch(batch.id)
-    Oven.racks.push(batch)
+    Oven.addToRack(batch)
     var index = this.pendingBatches.indexOf(batch)
     this.pendingBatches.splice(index, 1)
+    //remove it from the prepping table
   }
 }
 
@@ -62,7 +81,30 @@ var Oven = {
 
   init: function() {
     this.racks = new Array()
+
   },
+
+  addToRack: function(batch) {
+    console.log(this.racks)
+    this.racks.push(batch)
+
+    console.log(this.racks)
+    //add to the dom
+    var rackId = null
+    for(var i = 2; i >= 0; i--){
+      if ($('#rack_' + i ).text() === '[empty]')
+        rackId = '#rack_' + i
+    }
+  console.log(rackId)
+  $(rackId).text(batch.type)
+
+  },
+
+  bake: function(){
+    this.racks.each(function(i, batch) {
+      batch.bake()
+    })
+  }
 }
 
 
